@@ -6,6 +6,6 @@ func Hash(senha string) ([]byte, error) {
 	return bcrypt.GenerateFromPassword([]byte(senha), bcrypt.DefaultCost)
 }
 
-func verificarSenha(senhaComHash, senhaString string) error {
+func VerificarSenha(senhaComHash, senhaString string) error {
 	return bcrypt.CompareHashAndPassword([]byte(senhaComHash), []byte(senhaString))
 }
