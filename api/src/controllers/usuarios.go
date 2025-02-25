@@ -38,7 +38,7 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorios := repositorios.NovoRepositorioDeUsuario(db)
+	repositorios := repositorios.NovoRepositorioDeUsuarios(db)
 	usuario.ID, erro = repositorios.Criar(usuario)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
@@ -57,7 +57,7 @@ func BuscandoUsuarios(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorios := repositorios.NovoRepositorioDeUsuario(db)
+	repositorios := repositorios.NovoRepositorioDeUsuarios(db)
 	usuarios, erro := repositorios.Buscar(nomeOuNick)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
@@ -82,8 +82,8 @@ func BuscandoUsuarioPorId(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositorios.NovoRepositorioDeUsuario(db)
-	usuario, erro := repositorio.BuscarPorId(usuarioID)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
+	usuario, erro := repositorio.BuscarPorID(usuarioID)
 	if erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
@@ -132,7 +132,7 @@ func AtualizandoUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositorios.NovoRepositorioDeUsuario(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	if erro := repositorio.Atualizar(usuarioID, usuario); erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, nil)
 	}
@@ -155,7 +155,7 @@ func DeletandoUsuario(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repositorio := repositorios.NovoRepositorioDeUsuario(db)
+	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	if erro = repositorio.Deletar(ID); erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, erro)
 		return
