@@ -7,6 +7,7 @@ import (
 	"api/src/repositorios"
 	"api/src/respostas"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -102,7 +103,11 @@ func AtualizandoUsuario(w http.ResponseWriter, r *http.Request) {
 
 	usuarioIDNoToken, erro := autenticacao.ExtrairTokenID(r)
 	if erro != nil {
-		respostas.Erro(w, http.StatusForbidden, erro)
+		respostas.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+	if usuarioIDNoToken != usuarioID {
+		respostas.Erro(w, http.StatusUnauthorized, errors.New("não é possível atualizar um usuário que não seja o seu"))
 		return
 	}
 
@@ -135,6 +140,7 @@ func AtualizandoUsuario(w http.ResponseWriter, r *http.Request) {
 	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
 	if erro := repositorio.Atualizar(usuarioID, usuario); erro != nil {
 		respostas.Erro(w, http.StatusInternalServerError, nil)
+		return
 	}
 
 	respostas.JSON(w, http.StatusNoContent, nil)
@@ -145,6 +151,17 @@ func DeletandoUsuario(w http.ResponseWriter, r *http.Request) {
 	ID, erro := strconv.ParseUint(params["usuarioId"], 10, 64)
 	if erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	usuarioIDNoToken, erro := autenticacao.ExtrairTokenID(r)
+	if erro != nil {
+		respostas.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	if usuarioIDNoToken != ID {
+		respostas.Erro(w, http.StatusForbidden, errors.New("não é possível deletar um usuário que não seja o seu"))
 		return
 	}
 
