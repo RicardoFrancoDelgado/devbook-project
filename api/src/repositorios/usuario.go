@@ -243,7 +243,7 @@ func (repositorio Usuarios) BuscarSeguindo(usuarioID uint64) ([]modelos.Usuario,
 
 		if erro = linhas.Scan(
 			&usuario.ID,
-			&usuario.Nome,
+			&usuario.Nome, 
 			&usuario.Nick,
 			&usuario.Email,
 			&usuario.CriadoEm,
