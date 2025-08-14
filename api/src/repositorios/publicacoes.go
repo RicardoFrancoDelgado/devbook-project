@@ -35,3 +35,34 @@ func (repositorio Publicacoes) Criar(Publicacao modelos.Publicacao) (uint64, err
 
 	return uint64(ultimoIDInserido), nil
 }
+
+func (repositorio Publicacoes) BuscarPorId(PublicacaoID uint64) (modelos.Publicacao, error) {
+	linha, err := repositorio.db.Query(`
+		select p.*, u.nick from 
+		publicacoes p inner join usuarios u
+		on u.id = p.autor_id where p.id = ?	`,
+		PublicacaoID,
+	)
+	if err != nil {
+		return modelos.Publicacao{}, nil
+	}
+	defer linha.Close()
+
+	var publicacao modelos.Publicacao
+
+	if linha.Next() {
+		if err = linha.Scan(
+			&publicacao.ID,
+			&publicacao.Titulo,
+			&publicacao.Conteudo,
+			&publicacao.AutorID,
+			&publicacao.Curtidas,
+			&publicacao.CriadaEm,
+			&publicacao.AutorNick,
+		); err != nil {
+			return modelos.Publicacao{}, nil
+		}
+	}
+
+	return publicacao, nil
+}
