@@ -168,3 +168,17 @@ func (repositorio Publicacoes) BuscarPorUsuario(usuarioID uint64) ([]modelos.Pub
 
 	return publicacoes, nil
 }
+
+func (repositorio Publicacoes) Curtir(publicacaoID uint64) error {
+	statement, err := repositorio.db.Prepare("update publicacoes set curtidas = curtidas + 1 where id = ?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(publicacaoID); err != nil {
+		return err
+	}
+
+	return nil
+}
